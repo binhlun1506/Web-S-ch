@@ -2,10 +2,11 @@ import React, { useState, useMemo } from 'react';
 import { Product, CartItem, User } from './types';
 import { mockProducts } from './data/products';
 import Header from './components/Header';
-import ProductList from './components/ProductList';
+import Home from './components/Home';
 import ProductDetail from './components/ProductDetail';
 import Cart from './components/Cart';
 import AuthModal from './components/AuthModal';
+import Footer from './components/Footer';
 
 export default function App() {
   const [products] = useState<Product[]>(mockProducts);
@@ -14,6 +15,7 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleSelectProduct = (product: Product) => {
     setSelectedProduct(product);
@@ -55,13 +57,11 @@ export default function App() {
   };
 
   const handleLogin = (email: string) => {
-    // Đây là đăng nhập giả. Trong ứng dụng thực tế, bạn sẽ xác thực thông tin đăng nhập.
     setCurrentUser({ email });
     setIsAuthModalOpen(false);
   };
 
   const handleSignup = (email: string) => {
-    // Đây là đăng ký giả. Trong ứng dụng thực tế, bạn sẽ tạo người dùng mới.
     setCurrentUser({ email });
     setIsAuthModalOpen(false);
   };
@@ -74,8 +74,15 @@ export default function App() {
     return cart.reduce((total, item) => total + item.quantity, 0);
   }, [cart]);
 
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => 
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [products, searchTerm]);
+
+
   return (
-    <div className="min-h-screen bg-slate-900 font-sans">
+    <div className="min-h-screen bg-slate-900 font-sans flex flex-col">
       <Header 
         cartItemCount={cartItemCount}
         onCartClick={() => setIsCartOpen(true)}
@@ -83,21 +90,25 @@ export default function App() {
         currentUser={currentUser}
         onLoginClick={() => setIsAuthModalOpen(true)}
         onLogout={handleLogout}
+        onSearchChange={setSearchTerm}
       />
-      <main className="container mx-auto px-4 py-8 pt-24">
+      <main className="flex-grow pt-16">
         {selectedProduct ? (
-          <ProductDetail
-            product={selectedProduct}
-            onAddToCart={handleAddToCart}
-            onBack={handleBackToList}
-          />
+          <div className="container mx-auto px-4 py-8">
+            <ProductDetail
+              product={selectedProduct}
+              onAddToCart={handleAddToCart}
+              onBack={handleBackToList}
+            />
+          </div>
         ) : (
-          <ProductList
-            products={products}
+          <Home
+            products={filteredProducts}
             onSelectProduct={handleSelectProduct}
           />
         )}
       </main>
+      <Footer />
       <Cart
         isOpen={isCartOpen}
         items={cart}

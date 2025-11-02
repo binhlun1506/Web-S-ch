@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { User } from '../types';
 
 interface HeaderProps {
@@ -8,6 +8,7 @@ interface HeaderProps {
   currentUser: User | null;
   onLoginClick: () => void;
   onLogout: () => void;
+  onSearchChange: (searchTerm: string) => void;
 }
 
 const ShoppingCartIcon = () => (
@@ -22,26 +23,55 @@ const UserIcon = () => (
     </svg>
 );
 
-const Header: React.FC<HeaderProps> = ({ cartItemCount, onCartClick, onHomeClick, currentUser, onLoginClick, onLogout }) => {
+const SearchIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+)
+
+const Header: React.FC<HeaderProps> = ({ cartItemCount, onCartClick, onHomeClick, currentUser, onLoginClick, onLogout, onSearchChange }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(e.target.value);
+      onSearchChange(e.target.value);
+  }
+
   return (
     <header className="fixed top-0 left-0 right-0 bg-slate-900/80 backdrop-blur-sm shadow-md z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 gap-4">
           <div 
-            className="flex items-center space-x-2 cursor-pointer"
-            onClick={onHomeClick}
+            className="flex items-center space-x-2 cursor-pointer flex-shrink-0"
+            onClick={() => { onHomeClick(); onSearchChange(''); setSearchTerm(''); }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
-            <h1 className="text-2xl font-bold text-white tracking-tight">
+            <h1 className="text-2xl font-bold text-white tracking-tight hidden sm:block">
               Tech<span className="text-cyan-400">Galaxy</span>
             </h1>
           </div>
+          
+          <div className="flex-1 max-w-xl">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <SearchIcon />
+              </div>
+              <input 
+                type="search"
+                value={searchTerm}
+                onChange={handleSearch}
+                placeholder="Tìm kiếm sản phẩm..."
+                className="w-full bg-slate-700 border border-slate-600 rounded-md text-white px-3 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors"
+              />
+            </div>
+          </div>
+
           <div className="flex items-center space-x-4">
             {currentUser ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-slate-300 hidden sm:block">Xin chào, {currentUser.email}</span>
+              <div className="items-center space-x-4 hidden md:flex">
+                <span className="text-sm text-slate-300">Xin chào, {currentUser.email}</span>
                 <button 
                   onClick={onLogout}
                   className="px-3 py-1.5 text-sm font-medium text-white bg-slate-700 rounded-md hover:bg-slate-600 transition-colors"
@@ -52,10 +82,10 @@ const Header: React.FC<HeaderProps> = ({ cartItemCount, onCartClick, onHomeClick
             ) : (
               <button
                 onClick={onLoginClick}
-                className="flex items-center space-x-2 p-2 rounded-full text-slate-300 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-cyan-500 transition-colors"
+                className="items-center space-x-2 p-2 rounded-full text-slate-300 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-cyan-500 transition-colors hidden md:flex"
               >
                 <UserIcon />
-                <span className="text-sm font-medium hidden sm:block">Đăng nhập</span>
+                <span className="text-sm font-medium">Đăng nhập</span>
               </button>
             )}
             
