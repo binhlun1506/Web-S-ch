@@ -7,15 +7,19 @@ import ProductDetail from './components/ProductDetail';
 import Cart from './components/Cart';
 import AuthModal from './components/AuthModal';
 import Footer from './components/Footer';
+import AddProductModal from './components/AddProductModal';
+import QuickViewModal from './components/QuickViewModal';
 
 export default function App() {
-  const [products] = useState<Product[]>(mockProducts);
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [cart, setCart] = useState<CartItem[]>([]]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
   const handleSelectProduct = (product: Product) => {
     setSelectedProduct(product);
@@ -40,6 +44,14 @@ export default function App() {
     setIsCartOpen(true);
   };
   
+  const handleOpenQuickView = (product: Product) => {
+    setQuickViewProduct(product);
+  };
+
+  const handleCloseQuickView = () => {
+    setQuickViewProduct(null);
+  };
+
   const handleUpdateQuantity = (productId: number, newQuantity: number) => {
     if (newQuantity <= 0) {
       handleRemoveFromCart(productId);
@@ -68,6 +80,15 @@ export default function App() {
 
   const handleLogout = () => {
     setCurrentUser(null);
+  };
+  
+  const handleAddNewProduct = (newProductData: Omit<Product, 'id'>) => {
+    const newProduct: Product = {
+      id: Math.max(...products.map(p => p.id), 0) + 1,
+      ...newProductData
+    };
+    setProducts(prevProducts => [...prevProducts, newProduct]);
+    setIsAddProductModalOpen(false);
   };
 
   const cartItemCount = useMemo(() => {
@@ -105,6 +126,9 @@ export default function App() {
           <Home
             products={filteredProducts}
             onSelectProduct={handleSelectProduct}
+            onAddProductClick={() => setIsAddProductModalOpen(true)}
+            onAddToCart={handleAddToCart}
+            onQuickView={handleOpenQuickView}
           />
         )}
       </main>
@@ -121,6 +145,16 @@ export default function App() {
         onClose={() => setIsAuthModalOpen(false)}
         onLogin={handleLogin}
         onSignup={handleSignup}
+      />
+      <AddProductModal
+        isOpen={isAddProductModalOpen}
+        onClose={() => setIsAddProductModalOpen(false)}
+        onAddProduct={handleAddNewProduct}
+      />
+      <QuickViewModal
+        product={quickViewProduct}
+        onClose={handleCloseQuickView}
+        onAddToCart={handleAddToCart}
       />
     </div>
   );

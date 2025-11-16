@@ -5,10 +5,12 @@ import ProductCard from './ProductCard';
 interface ProductListProps {
   products: Product[];
   onSelectProduct: (product: Product) => void;
+  onAddToCart: (product: Product) => void;
+  onQuickView: (product: Product) => void;
 }
 
 const ProductList = React.forwardRef<HTMLDivElement, ProductListProps>(
-  ({ products, onSelectProduct }, ref) => {
+  ({ products, onSelectProduct, onAddToCart, onQuickView }, ref) => {
   return (
     <div ref={ref} className="pt-16 sm:pt-24 pb-16">
       <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl mb-12 text-center">Sản phẩm nổi bật</h2>
@@ -20,6 +22,8 @@ const ProductList = React.forwardRef<HTMLDivElement, ProductListProps>(
               key={product.id}
               product={product}
               onSelectProduct={onSelectProduct}
+              onAddToCart={onAddToCart}
+              onQuickView={onQuickView}
             />
           ))}
         </div>

@@ -10,9 +10,12 @@ import PromoBanners from './PromoBanners';
 interface HomeProps {
   products: Product[];
   onSelectProduct: (product: Product) => void;
+  onAddProductClick: () => void;
+  onAddToCart: (product: Product) => void;
+  onQuickView: (product: Product) => void;
 }
 
-const Home: React.FC<HomeProps> = ({ products, onSelectProduct }) => {
+const Home: React.FC<HomeProps> = ({ products, onSelectProduct, onAddProductClick, onAddToCart, onQuickView }) => {
   const productSectionRef = useRef<HTMLDivElement>(null);
 
   const [brandFilter, setBrandFilter] = useState('all');
@@ -95,11 +98,14 @@ const Home: React.FC<HomeProps> = ({ products, onSelectProduct }) => {
             onBrandChange={setBrandFilter}
             onPriceChange={setPriceFilter}
             onSortChange={setSortOrder}
+            onAddProductClick={onAddProductClick}
         />
         <ProductList 
           ref={productSectionRef}
           products={filteredAndSortedProducts} 
           onSelectProduct={onSelectProduct} 
+          onAddToCart={onAddToCart}
+          onQuickView={onQuickView}
         />
       </div>
 

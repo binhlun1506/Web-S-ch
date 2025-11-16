@@ -27,7 +27,13 @@ const SearchIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
     </svg>
-)
+);
+
+const CloseIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    </svg>
+);
 
 const Header: React.FC<HeaderProps> = ({ cartItemCount, onCartClick, onHomeClick, currentUser, onLoginClick, onLogout, onSearchChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -37,8 +43,13 @@ const Header: React.FC<HeaderProps> = ({ cartItemCount, onCartClick, onHomeClick
       onSearchChange(e.target.value);
   }
 
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    onSearchChange('');
+  }
+
   return (
-    <header className="fixed top-0 left-0 right-0 bg-slate-900/80 backdrop-blur-sm shadow-md z-50">
+    <header className="fixed top-0 left-0 right-0 bg-slate-900/70 backdrop-blur-md shadow-lg z-50 border-b border-slate-700/50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
           <div 
@@ -49,13 +60,13 @@ const Header: React.FC<HeaderProps> = ({ cartItemCount, onCartClick, onHomeClick
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
             <h1 className="text-2xl font-bold text-white tracking-tight hidden sm:block">
-              Tech<span className="text-cyan-400">Galaxy</span>
+              <span className="text-gradient">TechGalaxy</span>
             </h1>
           </div>
           
           <div className="flex-1 max-w-xl">
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                 <SearchIcon />
               </div>
               <input 
@@ -63,8 +74,17 @@ const Header: React.FC<HeaderProps> = ({ cartItemCount, onCartClick, onHomeClick
                 value={searchTerm}
                 onChange={handleSearch}
                 placeholder="Tìm kiếm sản phẩm..."
-                className="w-full bg-slate-700 border border-slate-600 rounded-md text-white px-3 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors"
+                className="w-full bg-slate-800/50 border border-slate-700 rounded-md text-white px-3 py-2 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors"
               />
+              {searchTerm && (
+                <button 
+                  onClick={handleClearSearch}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white cursor-pointer"
+                  aria-label="Clear search"
+                >
+                  <CloseIcon />
+                </button>
+              )}
             </div>
           </div>
 
@@ -74,7 +94,7 @@ const Header: React.FC<HeaderProps> = ({ cartItemCount, onCartClick, onHomeClick
                 <span className="text-sm text-slate-300">Xin chào, {currentUser.email}</span>
                 <button 
                   onClick={onLogout}
-                  className="px-3 py-1.5 text-sm font-medium text-white bg-slate-700 rounded-md hover:bg-slate-600 transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium text-white bg-slate-700 rounded-md hover:bg-slate-600 transition-all transform hover:scale-105"
                 >
                   Đăng xuất
                 </button>
@@ -82,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({ cartItemCount, onCartClick, onHomeClick
             ) : (
               <button
                 onClick={onLoginClick}
-                className="items-center space-x-2 p-2 rounded-full text-slate-300 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-cyan-500 transition-colors hidden md:flex"
+                className="items-center space-x-2 p-2 rounded-full text-slate-300 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500 transition-all transform hover:scale-105 hidden md:flex"
               >
                 <UserIcon />
                 <span className="text-sm font-medium">Đăng nhập</span>
@@ -91,7 +111,7 @@ const Header: React.FC<HeaderProps> = ({ cartItemCount, onCartClick, onHomeClick
             
             <button
               onClick={onCartClick}
-              className="relative p-2 rounded-full text-slate-300 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-cyan-500 transition-colors"
+              className="relative p-2 rounded-full text-slate-300 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500 transition-all transform hover:scale-105"
             >
               <span className="sr-only">View shopping cart</span>
               <ShoppingCartIcon />
